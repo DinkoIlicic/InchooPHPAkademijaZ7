@@ -35,6 +35,8 @@ post int not null
 )engine=InnoDB;
 
 
+
+
 alter table post add FOREIGN KEY (user) REFERENCES user(id);
 
 alter table comment add FOREIGN KEY (user) REFERENCES user(id);

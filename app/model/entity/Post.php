@@ -53,8 +53,6 @@ class Post
     public static function all()
     {
 
-       // $time=microtime(true);
-
         $list = [];
         $db = Db::connect();
         $statement = $db->prepare("select 
@@ -77,8 +75,7 @@ class Post
             $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,$comments,0);
            // $list[] = $post;
         }
-         //   $time2 = microtime(true);
-       // echo $time2-$time;
+
 
         return $list;
     }
@@ -87,7 +84,6 @@ class Post
     public static function allinone()
     {
 
-        $time=microtime(true);
         $list = [];
         $db = Db::connect();
         $statement = $db->prepare("select 
@@ -113,8 +109,6 @@ class Post
 
             $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,0);
         }
-        $time2 = microtime(true);
-        echo $time2-$time;
 
         return $list;
     }
