@@ -1,0 +1,57 @@
+
+
+ <?php if(!Session::getInstance()->isLoggedIn()): ?>    
+    <a href="<?php echo App::config("url")."admin/login" ?>">Login</a>
+    <a href="<?php echo App::config("url")."admin/registration" ?>">Registration</a>
+<?php else: ?>
+    <a href="<?php echo App::config("url")."admin/logout" ?>">Logout <?php echo Session::getInstance()->getUser()->name ?></a>
+<?php endif; ?>
+
+
+<?php if(Session::getInstance()->isLoggedIn()):?>
+<form method="post" action="<?php echo App::config('url') ?>Index/newPost">
+
+    <div class="form-group">
+        <label for="content">What's on your mind?</label>
+        <input id="content" name="content">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+
+</form>
+<?php endif; ?>
+
+
+ <?php foreach ($posts as $post): ?>
+    <p>
+        <cite><?= htmlspecialchars($post->getUser()) ?></cite>
+        <?php echo $post->date ?>
+        <a href="<?php echo App::config('url') ?>Index/view/<?= $post->getId() ?> ">
+            <?= htmlspecialchars($post->getContent()) ?> </a> <br />
+
+            <?php if( Session::getInstance()->isLoggedIn() ): ?>
+            <a href="<?php echo App::config('url') ?>admin/like/<?php echo $post->id ?>">Like</a>
+            <?php endif; ?>
+
+            (<?php echo $post->getLikes() ?> likes)
+
+    <?php foreach ($post->getComments() as $comment): ?>
+        <p style="margin-left: 20px;">
+            <cite><?= htmlspecialchars($comment->user) ?></cite>
+            <?php echo $comment->date ?><br />
+            <?php echo $comment->content ?>
+        </p>
+    <hr />
+    <?php endforeach; ?>
+
+
+    </p>
+<?php endforeach; ?>
+
+
+<?php //echo password_hash("t", PASSWORD_DEFAULT);
+
+
+?>
+
+ <a href="<?php echo App::config("url") ?>admin/bulkinsert">Insert</a>
