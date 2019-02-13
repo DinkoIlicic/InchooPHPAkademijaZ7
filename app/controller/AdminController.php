@@ -126,6 +126,11 @@ class AdminController
     {
         $db = Db::connect();
         $db->beginTransaction();
+
+        $statement = $db->prepare("delete from tag where post=:post");
+        $statement->bindValue('post', $post);
+        $statement->execute();
+
         $statement = $db->prepare("delete from comment where post=:post");
         $statement->bindValue('post', $post);
         $statement->execute();
