@@ -213,33 +213,70 @@ class AdminController
     public function like($post)
     {
         $db = Db::connect();
-        $statement = $db->prepare("insert into likes (post,user) values (:post,:user)");
-        $statement->bindValue('post', $post);
+        $statement = $db->prepare("select id from likes where (post=:id) && (user=:user)");
+        $statement->bindValue('id', $post);
         $statement->bindValue('user', Session::getInstance()->getUser()->id);
         $statement->execute();
-        
+        if($statement->fetchColumn(0) > 0) {
+            $db = Db::connect();
+            $statement = $db->prepare("delete from likes where (post=:id) && (user=:user)");
+            $statement->bindValue('id', $post);
+            $statement->bindValue('user', Session::getInstance()->getUser()->id);
+            $statement->execute();
+        } else {
+            $db = Db::connect();
+            $statement = $db->prepare("insert into likes (post,user) values (:post,:user)");
+            $statement->bindValue('post', $post);
+            $statement->bindValue('user', Session::getInstance()->getUser()->id);
+            $statement->execute();
+        }
         $this->index();
     }
 
     public function dislike($post)
     {
+
         $db = Db::connect();
-        $statement = $db->prepare("insert into dislike (post,user) values (:post,:user)");
-        $statement->bindValue('post', $post);
+        $statement = $db->prepare("select id from dislike where (post=:id) && (user=:user)");
+        $statement->bindValue('id', $post);
         $statement->bindValue('user', Session::getInstance()->getUser()->id);
         $statement->execute();
-
+        if($statement->fetchColumn(0) > 0) {
+            $db = Db::connect();
+            $statement = $db->prepare("delete from dislike where (post=:id) && (user=:user)");
+            $statement->bindValue('id', $post);
+            $statement->bindValue('user', Session::getInstance()->getUser()->id);
+            $statement->execute();
+        } else {
+            $db = Db::connect();
+            $statement = $db->prepare("insert into dislike (post,user) values (:post,:user)");
+            $statement->bindValue('post', $post);
+            $statement->bindValue('user', Session::getInstance()->getUser()->id);
+            $statement->execute();
+        }
         $this->index();
     }
 
     public function dislikeComment($comment)
     {
         $db = Db::connect();
-        $statement = $db->prepare("insert into dislike (comment,user) values (:comment,:user)");
-        $statement->bindValue('comment', $comment);
+        $statement = $db->prepare("select id from dislike where (comment=:id) && (user=:user)");
+        $statement->bindValue('id', $comment);
         $statement->bindValue('user', Session::getInstance()->getUser()->id);
         $statement->execute();
-
+        if($statement->fetchColumn(0) > 0) {
+            $db = Db::connect();
+            $statement = $db->prepare("delete from dislike where (comment=:id) && (user=:user)");
+            $statement->bindValue('id', $comment);
+            $statement->bindValue('user', Session::getInstance()->getUser()->id);
+            $statement->execute();
+        } else {
+            $db = Db::connect();
+            $statement = $db->prepare("insert into dislike (comment,user) values (:comment,:user)");
+            $statement->bindValue('comment', $comment);
+            $statement->bindValue('user', Session::getInstance()->getUser()->id);
+            $statement->execute();
+        }
         $this->index();
     }
 
