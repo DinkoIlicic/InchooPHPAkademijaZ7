@@ -5,7 +5,8 @@
     <a href="<?php echo App::config("url")."admin/profil" ?>">Profil </a><br />
     <a href="<?php echo App::config("url")."admin/logout" ?>">Logout <?php echo Session::getInstance()->getUser()->firstname;
         echo " " . Session::getInstance()->getUser()->lastname; ?>
-    </a>
+    </a><br />
+    <img style="max-width: 100px" src="<?php echo '../../images/'.Session::getInstance()->getUser()->picture;?>">
 <?php endif; ?>
 
 

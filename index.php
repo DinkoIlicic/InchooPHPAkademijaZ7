@@ -1,4 +1,8 @@
 <?php
+require 'vendor/autoload.php';
+use Metzli\Encoder\Encoder;
+use Metzli\Renderer\PngRenderer;
+
 define('BP', __DIR__ . '/');
 
 error_reporting(E_ALL);

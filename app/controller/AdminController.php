@@ -1,5 +1,8 @@
 <?php
 
+use Metzli\Encoder\Encoder;
+use Metzli\Renderer\PngRenderer;
+
 class AdminController
 {
     public function login()
@@ -28,26 +31,39 @@ class AdminController
 
     public function register()
     {
-
         $db = Db::connect();
-        $statement = $db->prepare("insert into user (firstname,lastname,email,pass) values (:firstname,:lastname,:email,:pass)");
-        $statement->bindValue('firstname', trim(Request::post("firstname")));
-        $statement->bindValue('lastname', trim(Request::post("lastname")));
-        $statement->bindValue('email', trim(Request::post("email")));
-        $statement->bindValue('pass', password_hash(Request::post("pass"),PASSWORD_DEFAULT));
+        $statement = $db->prepare("select id from user where email=:email");
+        $statement->bindValue('email', Request::post("email"));
         $statement->execute();
+        if($statement->fetchColumn() > 0) {
+            $view = new View();
+            return $view->render('registration',["message"=>"This email already is in use, please insert different email."]);
+        } else {
+            $code = Encoder::encode(Request::post("firstname").Request::post("lastname").Request::post("email"));
+            $renderer = new PngRenderer();
+            $renderer->render($code);
+            $picName = rand(5000,1000000);
+            rename(BP.'images/image.png',BP . 'images/' . $picName . '.png');
+            $db = Db::connect();
+            $statement = $db->prepare("insert into user (firstname,lastname,email,pass,picture) values (:firstname,:lastname,:email,:pass,:picture)");
+            $statement->bindValue('firstname', trim(Request::post("firstname")));
+            $statement->bindValue('lastname', trim(Request::post("lastname")));
+            $statement->bindValue('email', trim(Request::post("email")));
+            $statement->bindValue('pass', password_hash(Request::post("pass"),PASSWORD_DEFAULT));
+            $statement->bindValue('picture', $picName . '.png');
+            $statement->execute();
 
-        Session::getInstance()->logout();
-        $view = new View();
-        $view->render('login',["message"=>""]);
-       
+            Session::getInstance()->logout();
+            $view = new View();
+            $view->render('login',["message"=>""]);
+        }
     }
 
     public function updateUser()
     {
         if(empty(trim(Request::post('firstname'))) && empty(trim(Request::post('lastname'))) &&
             empty(trim(Request::post('email'))) && empty(trim(Request::post('newpass'))) &&
-            empty(trim(Request::post('newpassconf')))) {
+            empty(trim(Request::post('newpassconf'))) && $_FILES["file"]["size"] ===null) {
 
             $view = new View();
             return $view->render('profil',["message"=>"Please insert something."]);
@@ -109,9 +125,23 @@ class AdminController
             }
         }
 
+        if($_FILES["file"]["size"]>0) {
+            $pictureName = str_replace(' ','_',$_FILES["file"]["name"]);
+            if(move_uploaded_file($_FILES["file"]["tmp_name"], BP . "images/" . $pictureName)) {
+                $statement = $db->prepare("Update user set picture=:picture Where id=:id");
+                $statement->bindValue('picture', $pictureName);
+                $statement->bindValue('id', Session::getInstance()->getUser()->id);
+                $statement->execute();
+            } else {
+                $db->rollBack();
+                $view = new View();
+                return $view->render('profil',["message"=>"Something wrong with picture upload"]);
+            }
+        }
+
         $db->commit();
 
-        $statement = $db->prepare("select id, firstname, lastname, email from user where id=:id");
+        $statement = $db->prepare("select id, firstname, lastname, email, picture from user where id=:id");
         $statement->bindValue('id', Session::getInstance()->getUser()->id);
         $statement->execute();
 
@@ -196,7 +226,7 @@ class AdminController
     {
 //ne dostaju kontrole
         $db = Db::connect();
-        $statement = $db->prepare("select id, firstname, lastname, email, pass from user where email=:email");
+        $statement = $db->prepare("select id, firstname, lastname, email, pass, picture from user where email=:email");
         $statement->bindValue('email', Request::post("email"));
         $statement->execute();
 

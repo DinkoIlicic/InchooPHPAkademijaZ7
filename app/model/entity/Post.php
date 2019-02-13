@@ -107,7 +107,7 @@ class Post
         foreach ($statement->fetchAll() as $post) {
             //nema komentare - morao sam u upiti ići s left join
             if($post->commentid==null){
-                $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,0);
+                $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,null, 0);
                 continue;
             }
             //prvi rezultat ili promjena posta

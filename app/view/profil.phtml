@@ -7,7 +7,7 @@ elseif(Session::getInstance()->isLoggedIn()) :?>
 
     <p><strong><?php echo $message;?></strong></p>
 
-    <form method="post" action="<?php echo App::config('url') ?>admin/updateUser">
+    <form enctype="multipart/form-data" method="post" action="<?php echo App::config('url') ?>admin/updateUser">
 
         <div class="form-group">
 
@@ -25,6 +25,10 @@ elseif(Session::getInstance()->isLoggedIn()) :?>
 
             <label for="password">Confirm new password:</label><br />
             <input type="password" name="newpassconf"><br /><br />
+
+            <img style="max-width: 100px" src="<?php echo '../../images/'.Session::getInstance()->getUser()->picture;?>"><br />
+            <label for="file">New picture</label><br />
+            <input type="file" name="file" id="file"><br /><br />
 
         </div>
 
