@@ -7,11 +7,11 @@ id int not null primary key auto_increment,
 firstname varchar(50) not null,
 lastname varchar(50) not null,
 email varchar(100) not null,
-pass char(60) not null
+pass char(60) not null,
+picture varchar(100)
 )engine=InnoDB;
 
 create unique index ix1 on user(email);
-
 
 create table post(
 id int not null primary key auto_increment,
@@ -34,7 +34,23 @@ user int not null,
 post int not null
 )engine=InnoDB;
 
+create table tag(
+id int not null primary key auto_increment,
+post int not null,
+name varchar(100) not null
+)engine=InnoDB;
 
+create table dislike(
+id int not null primary key auto_increment,
+user int not null,
+post int not null
+)engine=InnoDB;
+
+create table privilege(
+id int not null primary key auto_increment,
+user int not null,
+role int not null
+)engine=InnoDB;
 
 
 alter table post add FOREIGN KEY (user) REFERENCES user(id);
@@ -45,6 +61,12 @@ alter table comment add FOREIGN KEY (post) REFERENCES post(id);
 alter table likes add FOREIGN KEY (user) REFERENCES user(id);
 alter table likes add FOREIGN KEY (post) REFERENCES post(id);
 
+alter table tag add FOREIGN KEY (post) REFERENCES post(id);
+
+alter table dislike add FOREIGN KEY (user) REFERENCES user(id);
+alter table dislike add FOREIGN KEY (post) REFERENCES post(id);
+
+alter table privilege add FOREIGN KEY (user) REFERENCES user(id);
 
 insert into user (id,firstname,lastname,email,pass) values
 (null,'Test1','Last1','mail1@gmail.com','$2y$10$LFXuW6y.P0Zd81fwd..CK.pCd6ZcoT5DsY7rqet9jwzReaoRi7yua');

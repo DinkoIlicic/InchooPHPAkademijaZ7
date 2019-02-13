@@ -1,0 +1,34 @@
+<?php if(!Session::getInstance()->isLoggedIn()):
+        header('Location: ' . App::config('url'));
+
+elseif(Session::getInstance()->isLoggedIn()) :?>
+
+    <a href="<?php echo App::config("url") ?>">Index</a><hr />
+
+    <p><strong><?php echo $message;?></strong></p>
+
+    <form method="post" action="<?php echo App::config('url') ?>admin/updateUser">
+
+        <div class="form-group">
+
+            <label for="firstname">First name: <?php echo Session::getInstance()->getUser()->firstname ?></label><br />
+            <input type="firstname" name="firstname"><br /><br />
+
+            <label for="lastname">Last name: <?php echo Session::getInstance()->getUser()->lastname ?></label><br />
+            <input type="lastname" name="lastname"><br /><br />
+
+            <label for="email">Email: <?php echo Session::getInstance()->getUser()->email ?></label><br />
+            <input type="email" name="email"><br /><br />
+
+            <label for="password">New password:</label><br />
+            <input type="password" name="newpass"><br /><br />
+
+            <label for="password">Confirm new password:</label><br />
+            <input type="password" name="newpassconf"><br /><br />
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+
+    </form>
+<?php endif;?>

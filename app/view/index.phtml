@@ -1,8 +1,11 @@
     <?php if(!Session::getInstance()->isLoggedIn()): ?>
-    <a href="<?php echo App::config("url")."admin/login" ?>">Login</a>
+    <a href="<?php echo App::config("url")."admin/login" ?>">Login</a><br />
     <a href="<?php echo App::config("url")."admin/registration" ?>">Registration</a>
 <?php else: ?>
-    <a href="<?php echo App::config("url")."admin/logout" ?>">Logout <?php echo Session::getInstance()->getUser()->name ?></a>
+    <a href="<?php echo App::config("url")."admin/profil" ?>">Profil </a><br />
+    <a href="<?php echo App::config("url")."admin/logout" ?>">Logout <?php echo Session::getInstance()->getUser()->firstname;
+        echo " " . Session::getInstance()->getUser()->lastname; ?>
+    </a>
 <?php endif; ?>
 
 
@@ -18,7 +21,6 @@
 
     </form>
 <?php endif; ?>
-
 
  <?php foreach ($posts as $post): ?>
     <p>
@@ -51,5 +53,3 @@
 
 
 ?>
-
- <a href="<?php echo App::config("url") ?>admin/bulkinsert">Insert</a>

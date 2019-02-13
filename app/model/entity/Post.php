@@ -50,7 +50,7 @@ class Post
         return $this;
     }
 
-    public static function all()
+    public static function allXXXXXX()
     {
 
         $list = [];
@@ -66,22 +66,17 @@ class Post
         order by a.date desc limit 10");
         $statement->execute();
         foreach ($statement->fetchAll() as $post) {
-
             $statement = $db->prepare("select a.id, a.content, concat(b.firstname, ' ', b.lastname) as user, a.date from comment a inner join user b on a.user=b.id where a.post=:id ");
             $statement->bindValue('id', $post->id);
             $statement->execute();
             $comments = $statement->fetchAll();
-
             $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,$comments,0);
-           // $list[] = $post;
-        }
 
+        }
 
         return $list;
     }
-
-
-    public static function allinone()
+    public static function all()
     {
 
         $list = [];
@@ -90,24 +85,45 @@ class Post
         a.id, a.content, concat(b.firstname, ' ', b.lastname) as user, a.date,
         d.id as commentid, d.content as commentcontent ,
         concat(e.firstname, ' ', e.lastname) as commentuser,
+        d.date as commentdate,
         count(c.id) as likes
         from 
         post a inner join user b on a.user=b.id 
         left join likes c on a.id=c.post 
-        inner join comment d on a.id=d.post
-        inner join user e on d.user=e.id
+        left join comment d on a.id=d.post
+        left join user e on d.user=e.id
         where a.date > ADDDATE(now(), INTERVAL -7 DAY) 
         group by a.id, a.content, concat(b.firstname, ' ', b.lastname), a.date ,
         d.id , d.content  ,
-        concat(e.firstname, ' ', e.lastname) 
+        concat(e.firstname, ' ', e.lastname) ,d.date
         order by a.date desc limit 100");
         $statement->execute();
         //todo završiti
+        $komentari=[];
+        $postid=0;
         foreach ($statement->fetchAll() as $post) {
+            //nema komentare - morao sam u upiti ići s left join
+            if($post->commentid==null){
+                $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,0);
+                continue;
+            }
+            //prvi rezultat ili promjena posta
+            if($postid===0 || $postid!==$post->id){
+                if($postid!==0){
+                    $p->setComments($komentari);
+                    $list[]=$p;
+                }
+                $postid=$post->id;
+                $p = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,0);
+                $komentari=[];
+            }
+            $k=new stdClass();
+            $k->id = $post->commentid;
+            $k->content = $post->commentcontent;
+            $k->user = $post->commentuser;
+            $k->date = $post->commentdate;
+            $komentari[] = $k;
 
-
-
-            $list[] = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,0);
         }
 
         return $list;
