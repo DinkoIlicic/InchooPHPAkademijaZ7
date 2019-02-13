@@ -14,9 +14,11 @@ class Post
 
     private $comments;
 
+    private $tags;
+
     private $userid;
 
-    public function __construct($id, $content, $user,$date, $likes,$comments,$userid)
+    public function __construct($id, $content, $user,$date, $likes, $comments, $tags, $userid)
     {
         $this->setId($id);
         $this->setContent($content);
@@ -25,6 +27,7 @@ class Post
         $this->setLikes($likes);
         $this->setComments($comments);
         $this->setUserid($userid);
+        $this->setTags($tags);
     }
 
     public function __set($name, $value)
@@ -114,7 +117,7 @@ class Post
                     $list[]=$p;
                 }
                 $postid=$post->id;
-                $p = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[] ,0);
+                $p = new Post($post->id, $post->content, $post->user,$post->date,$post->likes,[],null ,0);
                 $komentari=[];
             }
             $k=new stdClass();
@@ -139,16 +142,29 @@ class Post
         from 
         post a inner join user b on a.user=b.id 
         left join likes c on a.id=c.post 
-         where a.id=:id");
+        where a.id=:id");
         $statement->bindValue('id', $id);
         $statement->execute();
         $post = $statement->fetch();
 
-        $statement = $db->prepare("select a.id, a.content, concat(b.firstname, ' ', b.lastname) as user, a.date from comment a inner join user b on a.user=b.id where a.post=:id ");
+        $statement = $db->prepare("select
+        a.id, a.content, concat(b.firstname, ' ', b.lastname) as user, a.date 
+        from 
+        comment a inner join user b on a.user=b.id 
+        where a.post=:id ");
         $statement->bindValue('id', $id);
         $statement->execute();
         $comments = $statement->fetchAll();
 
-        return new Post($post->id, $post->content, $post->user, $post->date,$post->likes, $comments,$post->userid);
+        $statement = $db->prepare("select
+        id, name
+        from 
+        tag 
+        where post=:id ");
+        $statement->bindValue('id', $id);
+        $statement->execute();
+        $tags = $statement->fetchAll();
+
+        return new Post($post->id, $post->content, $post->user, $post->date,$post->likes, $comments, $tags, $post->userid);
     }
 }

@@ -160,6 +160,20 @@ class AdminController
         ]);
     }
 
+    public function tag($post) {
+        $db = Db::connect();
+        $statement = $db->prepare("insert into tag (post, name) values (:post,:name)");
+        $statement->bindValue('post', $post);
+        $statement->bindValue('name', Request::post("name"));
+        $statement->execute();
+
+        $view = new View();
+
+        $view->render('view', [
+            "post" => Post::find($post)
+        ]);
+    }
+
 
     public function like($post)
     {

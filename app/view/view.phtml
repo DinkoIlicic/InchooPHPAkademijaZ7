@@ -17,17 +17,36 @@
         <?php echo $comment->content ?>
     </p>
 <?php endforeach; ?>
+<h3>Tags</h3>
+<?php foreach ($post->getTags() as $tags): ?>
+    <p>
+        <?php echo $tags->name ?>
+    </p>
+<?php endforeach; ?>
 
 <?php if( Session::getInstance()->isLoggedIn() ): ?>
 
     <form method="post" action="<?php echo App::config('url') ?>admin/comment/<?php echo $post->getId() ?>">
 
     <div class="form-group">
-            <label for="content">New comment</label>
+            <label for="content">New comment: </label>
             <input id="content" name="content">
         </div>
 
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Add comment</button>
+
+    </form><br /><br />
+
+    <form method="post" action="<?php echo App::config('url') ?>admin/tag/<?php echo $post->getId() ?>">
+
+        <div class="form-group">
+            <label for="name">New tag: </label>
+            <input id="name" name="name">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add tag</button>
 
     </form>
 <?php endif; ?>
+
+
