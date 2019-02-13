@@ -43,7 +43,8 @@ name varchar(100) not null
 create table dislike(
 id int not null primary key auto_increment,
 user int not null,
-post int not null
+post int,
+comment int
 )engine=InnoDB;
 
 create table privilege(

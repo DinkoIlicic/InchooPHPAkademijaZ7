@@ -3,10 +3,11 @@
 <?php if( Session::getInstance()->isLoggedIn() &&
     $post->getUserid()==Session::getInstance()->getUser()->id): ?>
         <a href="<?php echo App::config("url") ?>admin/delete/<?php echo $post->getId() ?>">Delete posts (and all likes, comments and tags)</a><br />
-<?php endif; ?>
+<?php endif; ?><br />
 
-<cite><?= htmlspecialchars($post->getUser()) ?></cite>  <?php echo $post->date ?>
-<p><?= htmlspecialchars($post->getContent()) ?></p> Likes: <?php echo $post->getLikes() ?>
+<cite><?= htmlspecialchars($post->getUser()) ?></cite>  <?php echo $post->date ?><br /><br />
+<cite><?php echo $post->getLikes() ?> likes</cite><br />
+<cite><?php echo $post->getDislikes() ?> dislikes</cite>
 
 
 <h3>Comments</h3>

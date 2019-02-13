@@ -221,6 +221,27 @@ class AdminController
         $this->index();
     }
 
+    public function dislike($post)
+    {
+        $db = Db::connect();
+        $statement = $db->prepare("insert into dislike (post,user) values (:post,:user)");
+        $statement->bindValue('post', $post);
+        $statement->bindValue('user', Session::getInstance()->getUser()->id);
+        $statement->execute();
+
+        $this->index();
+    }
+
+    public function dislikeComment($comment)
+    {
+        $db = Db::connect();
+        $statement = $db->prepare("insert into dislike (comment,user) values (:comment,:user)");
+        $statement->bindValue('comment', $comment);
+        $statement->bindValue('user', Session::getInstance()->getUser()->id);
+        $statement->execute();
+
+        $this->index();
+    }
 
     public function authorize()
     {

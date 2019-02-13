@@ -32,16 +32,23 @@
 
             <?php if( Session::getInstance()->isLoggedIn() ): ?>
             <a href="<?php echo App::config('url') ?>admin/like/<?php echo $post->id ?>">Like</a>
+            (<?php echo $post->getLikes() ?> likes)<br />
+            <a href="<?php echo App::config('url') ?>admin/dislike/<?php echo $post->id ?>">Dislike</a>
+            (<?php echo $post->getDislikes() ?> dislikes)
             <?php endif; ?>
-
-            (<?php echo $post->getLikes() ?> likes)
 
     <?php foreach ($post->getComments() as $comment): ?>
         <p style="margin-left: 20px;">
             <cite><?= htmlspecialchars($comment->user) ?></cite>
             <?php echo $comment->date ?><br />
-            <?php echo $comment->content ?>
+            <?php echo $comment->content
+            ?>
+            <a href="<?php echo App::config('url') ?>admin/dislikeComment/<?php echo $comment->id ?>">Dislike</a>
+            (<?php
+            $dislikes = Post::countDislike($comment->id);
+            echo $dislikes->commentdislikes ?> dislikes)
         </p>
+
     <hr />
     <?php endforeach; ?>
 
